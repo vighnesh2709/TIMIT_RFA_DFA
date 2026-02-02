@@ -2,8 +2,25 @@ import torch
 from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader, random_split
 
+def splice_data(X,context):
+	T,D = X.shape
+	X_ctx = []
 
-def prep_dataset(vector_size):
+	for t in range(T):
+		frames = []
+		for offset in range(-context,context+1):
+			idx = t + offset
+			if idx < 0:
+				idx = 0
+			elif idx >= T:
+				idx = T-1
+			frames.append(X[idx])
+		X_ctx.append(torch.cat(frames))
+
+	return torch.stack(X_ctx)
+
+
+def prep_dataset(vector_size,context = 5,splicing = False):
 
 	PROJECT_ROOT = Path(f"/home1/vighnesh/Desktop/timit_rfa_dfa/data/processed_{vector_size}")
 	print(PROJECT_ROOT)
@@ -11,6 +28,13 @@ def prep_dataset(vector_size):
 	Y = torch.load(PROJECT_ROOT/ "Y.pt")
 
 	print(X.shape, Y.shape)
+	
+	if splicing:
+
+		X = splice_data(X,context)
+
+		torch.save(X, PROJECT_ROOT / "X.pt")
+		torch.save(Y, PROJECT_ROOT / "Y.pt")
 
 	dataset = TensorDataset(X,Y)
 	val_ratio = 0.2
