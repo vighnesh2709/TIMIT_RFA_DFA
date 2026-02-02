@@ -62,7 +62,7 @@ def check_dataset():
     print("Frame label alignments are correct")
 
 
-def write_tensor():
+def write_tensor(vector_size):
 	X = []
 	Y = []
 
@@ -74,7 +74,7 @@ def write_tensor():
 	X = torch.tensor(X,dtype = torch.float32)
 	Y = torch.tensor(Y,dtype = torch.int64)
 
-	out_dir = PROJECT_ROOT / "data" / "processed"
+	out_dir = PROJECT_ROOT / "data" / f"processed_{vector_size}"
 	out_dir.mkdir(parents=True, exist_ok=True)
 	
 	torch.save(X, out_dir / "X.pt")

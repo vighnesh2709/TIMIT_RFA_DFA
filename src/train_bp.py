@@ -20,6 +20,8 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
     epochs = 100
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
+    max_acc_train = 0
+    max_acc_val = 0
 
     for epoch in range(epochs):
 
@@ -28,7 +30,7 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
         correct = 0
         total = 0
 
-        for x, y in tqdm(train_loader, desc=f"Train {epoch+1}/{epochs}"):
+        for x, y in tqdm(train_loader, desc=f"Train {epoch+1}/{epochs}", leave = False):
             x = x.to(device)
             y = y.to(device)
 
@@ -46,6 +48,7 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
 
         train_loss /= len(train_loader)
         train_acc = correct / total
+        max_acc_train = max(max_acc_train,train_acc)
 
         train_losses.append(train_loss)
         train_accs.append(train_acc)
@@ -71,6 +74,7 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
 
         val_loss /= len(val_loader)
         val_acc = correct / total
+        max_acc_val = max(max_acc_val,val_acc)
 
         val_losses.append(val_loss)
         val_accs.append(val_acc)
@@ -82,4 +86,6 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
             f"Val CE: {val_loss:.4f} | "
             f"Val Acc: {val_acc:.4f}"
         )
+
+    return max_acc_train,max_acc_val
 

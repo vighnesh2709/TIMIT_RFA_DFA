@@ -39,6 +39,8 @@ def train_dfa(X, Y, num_feats, num_pdfs):
     # ------------------ LOGGING ------------------
     train_ce_hist, val_ce_hist = [], []
     train_acc_hist, val_acc_hist = [], []
+    max_acc_train = 0
+    max_acc_val = 0
 
     # ================== TRAIN ==================
     for epoch in range(epochs):
@@ -98,7 +100,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
 
         train_acc = correct / total
         train_ce = epoch_loss / (X_train.size(0) / batch_size)
-
+        max_acc_train = max(max_acc_train,train_acc)
         train_acc_hist.append(train_acc)
         train_ce_hist.append(train_ce)
 
@@ -127,7 +129,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
 
         val_acc = correct / total
         val_ce = val_loss / (X_val.size(0) / batch_size)
-
+        max_acc_val = max(max_acc_val,val_acc)
         val_acc_hist.append(val_acc)
         val_ce_hist.append(val_ce)
 
@@ -138,5 +140,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
             f"Val CE: {val_ce:.4f} | "
             f"Val Acc: {val_acc:.4f}"
         )
+
+    return max_acc_train,max_acc_val
 
 

@@ -2,10 +2,11 @@ import torch
 from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader, random_split
 
-PROJECT_ROOT = Path("/home1/vighnesh/Desktop/timit_rfa_dfa/data/processed")
 
-def prep_dataset():
+def prep_dataset(vector_size):
 
+	PROJECT_ROOT = Path(f"/home1/vighnesh/Desktop/timit_rfa_dfa/data/processed_{vector_size}")
+	print(PROJECT_ROOT)
 	X = torch.load(PROJECT_ROOT/ "X.pt")
 	Y = torch.load(PROJECT_ROOT/ "Y.pt")
 
