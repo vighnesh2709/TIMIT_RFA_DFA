@@ -7,12 +7,16 @@ class DFA_MLP(nn.Module):
 		self.fc1 = nn.Linear(in_dim,hidden_dim,bias = True)
 		self.fc2 = nn.Linear(hidden_dim,hidden_dim, bias = True)
 		self.fc3 = nn.Linear(hidden_dim, out_dim, bias = True)
+		self.bn1 = nn.BatchNorm1d(hidden_dim)
+		self.bn2 = nn.BatchNorm1d(hidden_dim)
 
 	def forward(self,x):
 		a1 = self.fc1(x)
+		#n1 = self.bn1(a1)
 		h1 = torch.relu(a1)
 
 		a2 = self.fc2(h1)
+		#n2 = self.bn2(a2)
 		h2 = torch.relu(a2)
 
 		a3 = self.fc3(h2)

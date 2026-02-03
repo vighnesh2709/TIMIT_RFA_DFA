@@ -5,8 +5,10 @@ class MLP(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(num_feats, 512),
+	    #nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Linear(512, 512),
+	    #nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Linear(512, num_pdfs)
         )
