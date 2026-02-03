@@ -100,9 +100,8 @@ def main():
 	end_DFA_39 = time.time()
 
 	
-	write_file =  open("/home1/vighnesh/Desktop/result1.txt", "w")
+	write_file =  open("../results/results_sample.txt", "w")
 
-	
 	write_file.write("\n================ SUMMARY 13 DIMENSIONS =================\n")
 	write_file.write(f"Backprop  | Max Train Acc: {max_acc_train_bp_13:.4f} | Max Val Acc: {max_acc_val_bp_13:.4f} | Time: {(end_bp - start_bp)/60:.2f} min\n")
 	write_file.write(f"RFA       | Max Train Acc: {max_acc_train_RFA_13:.4f} | Max Val Acc: {max_acc_val_RFA_13:.4f} | Time: {(end_RFA - start_RFA)/60:.2f} min\n")
