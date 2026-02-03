@@ -15,6 +15,8 @@ The project covers MFCC preprocessing, frame-level alignments, tensorized datase
 ```text
 .
 ├── src/
+|   ├── kaldi_scipts
+|   │   ├── FeatureExtraction.sh
 │   ├── utils/
 │   │   ├── process_timit.py
 │   │   └── load_dataset.py
