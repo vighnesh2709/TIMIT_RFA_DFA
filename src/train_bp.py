@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-from model.backprop import MLP
+from model.backprop import MLP 
+from model.backprop_v2 import MLP as MLP_V2
+
 
 def train_bp(train_loader, val_loader,num_feats,num_pdfs):
 
@@ -11,13 +13,19 @@ def train_bp(train_loader, val_loader,num_feats,num_pdfs):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
 
-    model = MLP(num_feats, num_pdfs).to(device)
+    model = MLP_V2(num_feats, num_pdfs).to(device)
+
+    no_param = 0
+    for p in model.parameters():
+        no_param += len(p)
+
+    print(no_param)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
     # ---------- TRAIN ----------
-    epochs = 100
+    epochs = 65
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
     max_acc_train = 0

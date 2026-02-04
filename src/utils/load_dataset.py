@@ -35,17 +35,17 @@ def prep_dataset(vector_size,context = 5,splicing = False):
 	X = torch.load(processed_root / "X.pt")
 	Y = torch.load(processed_root / "Y.pt")
 
-	print(X.shape, Y.shape)
+	# print(X.shape, Y.shape)
 	
 	if splicing:
 
 		X = splice_data(X,context)
-
 		# torch.save(X, PROJECT_ROOT / "X.pt")
 		# torch.save(Y, PROJECT_ROOT / "Y.pt")
 		torch.save(X, processed_root / "X.pt")
 		torch.save(Y, processed_root / "Y.pt")
-
+		
+	print(X.shape,Y.shape)
 	dataset = TensorDataset(X,Y)
 	val_ratio = 0.2
 	val_size = int(len(dataset) * val_ratio)

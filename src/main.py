@@ -3,8 +3,11 @@ from pathlib import Path
 import torch
 from utils.load_dataset import prep_dataset
 from train_bp import train_bp
-from train_RFA import train_rfa
-from train_DFA import train_dfa
+# from train_RFA import train_rfa
+# from train_DFA import train_dfa
+from train_DFA_v2 import train_dfa
+from train_RFA_v2 import train_rfa
+# from train_bp import train_bp as train_bp_v2
 import time
 import os
 
@@ -16,8 +19,6 @@ def main():
 
 	print("PRE PROCESSING 13 DIMENTIONAL VECTOR\n")
 
-	# load_mfcc("/home1/vighnesh/Desktop/timit_rfa_dfa/data/feature_extracted/export_feats/mfcc_mono.txt")
-	# load_alignments("/home1/vighnesh/Desktop/timit_rfa_dfa/data/feature_extracted/export_feats/labels_mono.txt")
 	load_mfcc(str(feature_dir / "mfcc_mono.txt"))
 	load_alignments(str(feature_dir / "labels_mono.txt"))
 	check_dataset()
@@ -49,9 +50,6 @@ def main():
 	print("\n")
 	
 	print("TRAINING RFA\n")
-	# PROJECT_ROOT = Path("/home1/vighnesh/Desktop/timit_rfa_dfa/data/processed_13")
-	# X = torch.load(PROJECT_ROOT/ "X.pt")
-	# Y = torch.load(PROJECT_ROOT/ "Y.pt")
 	processed_root = data_dir / "processed_13"
 	X = torch.load(processed_root / "X.pt")
 	Y = torch.load(processed_root / "Y.pt")
@@ -66,11 +64,11 @@ def main():
 	max_acc_train_DFA_13,max_acc_val_DFA_13 = train_dfa(X,Y,13*((splice_size*2)+1),144)
 	end_DFA = time.time()
 
-	# hmm-info tri1/final.mdl 
-	# number of phones 48
-	# number of pdfs 1880
-	# number of transition-ids 3834
-	# number of transition-states 1917
+	# # hmm-info tri1/final.mdl 
+	# # number of phones 48
+	# # number of pdfs 1880
+	# # number of transition-ids 3834
+	# # number of transition-states 1917
 
 	print("\n")
 	
@@ -82,9 +80,6 @@ def main():
 	print("\n")
 	
 	print("TRAINING RFA\n")
-	# PROJECT_ROOT = Path("/home1/vighnesh/Desktop/timit_rfa_dfa/data/processed_39")
-	# X = torch.load(PROJECT_ROOT/ "X.pt")
-	# Y = torch.load(PROJECT_ROOT/ "Y.pt")
 	processed_root = data_dir / "processed_39"
 	X = torch.load(processed_root / "X.pt")
 	Y = torch.load(processed_root / "Y.pt")
@@ -92,7 +87,7 @@ def main():
 	max_acc_train_RFA_39, max_acc_val_RFA_39 = train_rfa(X,Y,39*((splice_size*2)+1),1880)
 	end_RFA_39 = time.time()
 
-	# print("\n")
+	print("\n")
 
 	print("TRAINING DFA\n")
 	start_DFA_39 = time.time()
@@ -100,7 +95,7 @@ def main():
 	end_DFA_39 = time.time()
 
 	
-	write_file =  open("../results/results_sample.txt", "w")
+	write_file =  open("../results/results_4_layers.txt", "w")
 
 	write_file.write("\n================ SUMMARY 13 DIMENSIONS =================\n")
 	write_file.write(f"Backprop  | Max Train Acc: {max_acc_train_bp_13:.4f} | Max Val Acc: {max_acc_val_bp_13:.4f} | Time: {(end_bp - start_bp)/60:.2f} min\n")
@@ -117,7 +112,6 @@ def main():
 	write_file.close()
 
 
-	
 
 if __name__ ==  "__main__":
 	main()
