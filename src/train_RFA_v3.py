@@ -10,7 +10,7 @@ from model.RFA import RFA_MLP
 def train_rfa(X, Y, num_feats, num_pdfs):
 
     # ------------------ HYPERPARAMS (internal) ------------------
-    epochs = 100
+    epochs = 2
     batch_size = 256
     lr = 1e-3
     train_ratio = 0.9
@@ -126,46 +126,49 @@ def train_rfa(X, Y, num_feats, num_pdfs):
                 # Extract profiling results
                 prof_table = prof.key_averages()
                 total_flops = sum([item.flops for item in prof_table if item.flops > 0])
+                with open("RFA_FLOPS.txt", "w") as f:
+                    f.write(f"TOTAL FLOPS: {total_flops}")
+                    f.write(prof_table.table(sort_by="flops"))
                 
-                print(f"\nFull training step (Forward + RFA Backward + Updates):")
-                print(f"  Total FLOPs: {total_flops:,}")
-                print(f"  Total GFLOPs: {total_flops / 1e9:.6f}")
-                print(f"  Batch size: {xb.size(0)}")
-                print(f"  FLOPs per sample: {total_flops / xb.size(0):,}")
+                # print(f"\nFull training step (Forward + RFA Backward + Updates):")
+                # print(f"  Total FLOPs: {total_flops:,}")
+                # print(f"  Total GFLOPs: {total_flops / 1e9:.6f}")
+                # print(f"  Batch size: {xb.size(0)}")
+                # print(f"  FLOPs per sample: {total_flops / xb.size(0):,}")
                 
-                print("\n" + "-"*80)
-                print("TOP OPERATIONS BY FLOPs:")
-                print("-"*80)
-                print(prof_table.table(sort_by="flops", row_limit=15))
+                # print("\n" + "-"*80)
+                # print("TOP OPERATIONS BY FLOPs:")
+                # print("-"*80)
+                # print(prof_table.table(sort_by="flops", row_limit=15))
                 
-                # Store profiling results
-                profile_results = {
-                    "timestamp": datetime.now().isoformat(),
-                    "device": str(device),
-                    "epoch": profile_epoch,
-                    "batch_number": profile_batch_idx,
-                    "model_config": {
-                        "num_features": num_feats,
-                        "hidden_dim": hidden_dim,
-                        "num_classes": num_pdfs,
-                    },
-                    "batch_config": {
-                        "batch_size": xb.size(0),
-                        "learning_rate": lr,
-                    },
-                    "flops": {
-                        "full_training_step": {
-                            "total_flops": int(total_flops),
-                            "total_gflops": round(total_flops / 1e9, 6),
-                            "per_sample": int(total_flops / xb.size(0)),
-                        },
-                    },
-                    "operation_breakdown": _extract_op_breakdown(prof_table),
-                }
+                # # Store profiling results
+                # profile_results = {
+                #     "timestamp": datetime.now().isoformat(),
+                #     "device": str(device),
+                #     "epoch": profile_epoch,
+                #     "batch_number": profile_batch_idx,
+                #     "model_config": {
+                #         "num_features": num_feats,
+                #         "hidden_dim": hidden_dim,
+                #         "num_classes": num_pdfs,
+                #     },
+                #     "batch_config": {
+                #         "batch_size": xb.size(0),
+                #         "learning_rate": lr,
+                #     },
+                #     "flops": {
+                #         "full_training_step": {
+                #             "total_flops": int(total_flops),
+                #             "total_gflops": round(total_flops / 1e9, 6),
+                #             "per_sample": int(total_flops / xb.size(0)),
+                #         },
+                #     },
+                #     "operation_breakdown": _extract_op_breakdown(prof_table),
+                # }
                 
-                print("\n" + "="*80)
-                print("Profiling complete. Results will be saved after training.\n")
-                print("="*80 + "\n")
+                # print("\n" + "="*80)
+                # print("Profiling complete. Results will be saved after training.\n")
+                # print("="*80 + "\n")
                 
                 # Continue with normal training after profiling
                 with torch.no_grad():
@@ -288,102 +291,102 @@ def train_rfa(X, Y, num_feats, num_pdfs):
             f"Val Acc: {val_acc:.4f}"
         )
 
-    # ============================================================================
-    # SAVE PROFILING RESULTS TO FILE (if profiling was enabled)
-    # ============================================================================
-    if enable_profiling and profile_results is not None:
-        output_dir = Path("./rfa_profile_results")
-        output_dir.mkdir(parents=True, exist_ok=True)
+#     # ============================================================================
+#     # SAVE PROFILING RESULTS TO FILE (if profiling was enabled)
+#     # ============================================================================
+#     if enable_profiling and profile_results is not None:
+#         output_dir = Path("./rfa_profile_results")
+#         output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Save JSON results
-        json_path = output_dir / "rfa_flops_results.json"
-        with open(json_path, "w") as f:
-            json.dump(profile_results, f, indent=2)
+#         # Save JSON results
+#         json_path = output_dir / "rfa_flops_results.json"
+#         with open(json_path, "w") as f:
+#             json.dump(profile_results, f, indent=2)
         
-        print("\n" + "="*80)
-        print("PROFILING RESULTS SAVED")
-        print("="*80)
-        print(f"JSON file: {json_path}")
+#         print("\n" + "="*80)
+#         print("PROFILING RESULTS SAVED")
+#         print("="*80)
+#         print(f"JSON file: {json_path}")
         
-        # Also save a human-readable text file
-        txt_path = output_dir / "rfa_flops_results.txt"
-        _save_txt_summary(txt_path, profile_results)
-        print(f"Text file: {txt_path}\n")
+#         # Also save a human-readable text file
+#         txt_path = output_dir / "rfa_flops_results.txt"
+#         _save_txt_summary(txt_path, profile_results)
+#         print(f"Text file: {txt_path}\n")
 
     return max_acc_train, max_acc_val
 
 
-def _extract_op_breakdown(profiler_table):
-    """Extract top operations by FLOPs from profiler table."""
-    ops = []
-    for item in profiler_table:
-        if item.flops > 0:
-            ops.append({
-                "operation": item.key,
-                "flops": int(item.flops),
-                "cpu_time_ms": round(item.cpu_time / 1000, 4),
-                "count": int(item.count),
-            })
+# def _extract_op_breakdown(profiler_table):
+#     """Extract top operations by FLOPs from profiler table."""
+#     ops = []
+#     for item in profiler_table:
+#         if item.flops > 0:
+#             ops.append({
+#                 "operation": item.key,
+#                 "flops": int(item.flops),
+#                 "cpu_time_ms": round(item.cpu_time / 1000, 4),
+#                 "count": int(item.count),
+#             })
     
-    ops.sort(key=lambda x: x["flops"], reverse=True)
-    return ops[:15]
+#     ops.sort(key=lambda x: x["flops"], reverse=True)
+#     return ops[:15]
 
 
-def _save_txt_summary(path, results):
-    """Save human-readable summary to text file."""
-    with open(path, "w") as f:
-        f.write("="*80 + "\n")
-        f.write("RFA TRAINING - FORWARD AND BACKWARD FLOPs PROFILING\n")
-        f.write("="*80 + "\n\n")
+# def _save_txt_summary(path, results):
+#     """Save human-readable summary to text file."""
+#     with open(path, "w") as f:
+#         f.write("="*80 + "\n")
+#         f.write("RFA TRAINING - FORWARD AND BACKWARD FLOPs PROFILING\n")
+#         f.write("="*80 + "\n\n")
         
-        f.write(f"Timestamp: {results['timestamp']}\n")
-        f.write(f"Device: {results['device']}\n\n")
+#         f.write(f"Timestamp: {results['timestamp']}\n")
+#         f.write(f"Device: {results['device']}\n\n")
         
-        f.write("MODEL CONFIGURATION:\n")
-        f.write("-"*80 + "\n")
-        for key, val in results['model_config'].items():
-            f.write(f"  {key:.<40} {val}\n")
+#         f.write("MODEL CONFIGURATION:\n")
+#         f.write("-"*80 + "\n")
+#         for key, val in results['model_config'].items():
+#             f.write(f"  {key:.<40} {val}\n")
         
-        f.write("\nBATCH CONFIGURATION:\n")
-        f.write("-"*80 + "\n")
-        for key, val in results['batch_config'].items():
-            f.write(f"  {key:.<40} {val}\n")
+#         f.write("\nBATCH CONFIGURATION:\n")
+#         f.write("-"*80 + "\n")
+#         for key, val in results['batch_config'].items():
+#             f.write(f"  {key:.<40} {val}\n")
         
-        f.write(f"\nProfiled at Epoch {results['epoch']}, Batch {results['batch_number']}\n\n")
+#         f.write(f"\nProfiled at Epoch {results['epoch']}, Batch {results['batch_number']}\n\n")
         
-        flops_data = results['flops']['full_training_step']
-        f.write("FLOPs MEASUREMENT:\n")
-        f.write("-"*80 + "\n")
-        f.write(f"Total FLOPs (Forward + RFA Backward + Updates):\n")
-        f.write(f"  {flops_data['total_flops']:>20,} FLOPs\n")
-        f.write(f"  {flops_data['total_gflops']:>20.6f} GFLOPs\n")
-        f.write(f"  {flops_data['per_sample']:>20,} FLOPs per sample\n")
+#         flops_data = results['flops']['full_training_step']
+#         f.write("FLOPs MEASUREMENT:\n")
+#         f.write("-"*80 + "\n")
+#         f.write(f"Total FLOPs (Forward + RFA Backward + Updates):\n")
+#         f.write(f"  {flops_data['total_flops']:>20,} FLOPs\n")
+#         f.write(f"  {flops_data['total_gflops']:>20.6f} GFLOPs\n")
+#         f.write(f"  {flops_data['per_sample']:>20,} FLOPs per sample\n")
         
-        f.write(f"\nEstimations:\n")
-        f.write(f"  For 100 epochs (10K steps): {flops_data['total_flops'] * 10000:>15,} FLOPs\n")
-        f.write(f"  For 100 epochs (10K steps): {flops_data['total_flops'] * 10000 / 1e12:>15.3f} TFLOPs\n")
+#         f.write(f"\nEstimations:\n")
+#         f.write(f"  For 100 epochs (10K steps): {flops_data['total_flops'] * 10000:>15,} FLOPs\n")
+#         f.write(f"  For 100 epochs (10K steps): {flops_data['total_flops'] * 10000 / 1e12:>15.3f} TFLOPs\n")
         
-        f.write("\n" + "="*80 + "\n")
-        f.write("TOP OPERATIONS BY FLOPs:\n")
-        f.write("="*80 + "\n")
-        f.write(f"{'Operation':<45} {'FLOPs':>15} {'Count':>8}\n")
-        f.write("-"*80 + "\n")
+#         f.write("\n" + "="*80 + "\n")
+#         f.write("TOP OPERATIONS BY FLOPs:\n")
+#         f.write("="*80 + "\n")
+#         f.write(f"{'Operation':<45} {'FLOPs':>15} {'Count':>8}\n")
+#         f.write("-"*80 + "\n")
         
-        for op in results['operation_breakdown']:
-            f.write(f"{op['operation']:<45} {op['flops']:>15,} {op['count']:>8}\n")
+#         for op in results['operation_breakdown']:
+#             f.write(f"{op['operation']:<45} {op['flops']:>15,} {op['count']:>8}\n")
         
-        f.write("\n" + "="*80 + "\n")
-        f.write("NOTES:\n")
-        f.write("="*80 + "\n")
-        f.write("""
-This profiling measures the FLOPs for one complete RFA training step which includes:
-1. Forward pass through the network
-2. RFA backward computation using fixed random matrices (B2, B3)
-3. Direct weight updates
+#         f.write("\n" + "="*80 + "\n")
+#         f.write("NOTES:\n")
+#         f.write("="*80 + "\n")
+#         f.write("""
+# This profiling measures the FLOPs for one complete RFA training step which includes:
+# 1. Forward pass through the network
+# 2. RFA backward computation using fixed random matrices (B2, B3)
+# 3. Direct weight updates
 
-The FLOPs include all matrix multiplications and element-wise operations.
+# The FLOPs include all matrix multiplications and element-wise operations.
 
-To scale this to a full training run:
-- Multiply by number of total training steps (batches × epochs)
-- Adjust batch size if different from profiled batch size
-""")
+# To scale this to a full training run:
+# - Multiply by number of total training steps (batches × epochs)
+# - Adjust batch size if different from profiled batch size
+# """)

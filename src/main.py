@@ -2,11 +2,12 @@ from utils.process_timit import load_mfcc, load_alignments, check_dataset,write_
 from pathlib import Path
 import torch
 from utils.load_dataset import prep_dataset
-from train_bp import train_bp
+# from train_bp import train_bp
+from train_bp_v3 import train_bp
 # from train_RFA import train_rfa
 # from train_DFA import train_dfa
 from train_DFA_v2 import train_dfa
-from train_RFA_v2 import train_rfa
+from train_RFA_v3 import train_rfa
 # from train_bp import train_bp as train_bp_v2
 import time
 import os
