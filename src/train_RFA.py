@@ -1,12 +1,19 @@
 import torch
 from tqdm import tqdm
+from torch.profiler import profile, ProfilerActivity, record_function
 
 from model.RFA import RFA_MLP
+
+prof = profile(
+    activities = [ProfilerActivity.CPU],
+    record_shapes = True,
+    with_flops = True,
+)
 
 def train_rfa(X, Y, num_feats, num_pdfs):
 
     # ------------------ HYPERPARAMS (internal) ------------------
-    epochs = 100
+    epochs = 1
     batch_size = 256
     lr = 1e-3
     train_ratio = 0.9
@@ -61,6 +68,8 @@ def train_rfa(X, Y, num_feats, num_pdfs):
             desc=f"Epoch {epoch+1}/{epochs}",
             leave=False
         ):
+            if i == 0 and epoch == 0:
+                prof.start()
             xb = X_shuf[i:i+batch_size]
             yb = Y_shuf[i:i+batch_size]
 
@@ -100,6 +109,10 @@ def train_rfa(X, Y, num_feats, num_pdfs):
                 preds = probs.argmax(dim=1)
                 correct += (preds == yb).sum().item()
                 total += yb.size(0)
+            if i == 0 and epoch == 0:
+                prof.stop()
+                write_RFA = open(f"RFA_flops_{num_pdfs}.txt","w")
+                write_RFA.write(prof.key_averages().table(sort_by = "flops"))
 
         train_acc = correct / total
         train_ce = epoch_loss / (X_train.size(0) / batch_size)

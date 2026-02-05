@@ -1,12 +1,18 @@
 import torch
 from tqdm import tqdm
 from model.DFA import DFA_MLP
+from torch.profiler import profile, ProfilerActivity, record_function
 
+prof = profile(
+    activities = [ProfilerActivity.CPU],
+    record_shapes = True,
+    with_flops = True,
+)
 
 def train_dfa(X, Y, num_feats, num_pdfs):
 
     # ------------------ HYPERPARAMS ------------------
-    epochs = 100
+    epochs = 1
     batch_size = 256
     lr = 1e-3
     train_ratio = 0.9
@@ -58,6 +64,9 @@ def train_dfa(X, Y, num_feats, num_pdfs):
             desc=f"Epoch {epoch+1}/{epochs}",
             leave=False
         ):
+            if epoch == 0 and i == 0:
+                prof.start()
+
             xb = X_shuf[i:i+batch_size]
             yb = Y_shuf[i:i+batch_size]
 
@@ -97,6 +106,10 @@ def train_dfa(X, Y, num_feats, num_pdfs):
                 preds = probs.argmax(dim=1)
                 correct += (preds == yb).sum().item()
                 total += yb.size(0)
+            if epoch == 0 and i == 0:
+                prof.stop()
+                write_temp = open(f"DFA_flops_{num_pdfs}.txt", "w")
+                write_temp.write(prof.key_averages().table(sort_by = "flops"))
 
         train_acc = correct / total
         train_ce = epoch_loss / (X_train.size(0) / batch_size)
