@@ -13,7 +13,7 @@ prof = profile(
 def train_rfa(X, Y, num_feats, num_pdfs):
 
     # ------------------ HYPERPARAMS (internal) ------------------
-    epochs = 1
+    epochs = 2
     batch_size = 256
     lr = 1e-3
     train_ratio = 0.9
@@ -109,11 +109,18 @@ def train_rfa(X, Y, num_feats, num_pdfs):
                 preds = probs.argmax(dim=1)
                 correct += (preds == yb).sum().item()
                 total += yb.size(0)
+                
             if i == 0 and epoch == 0:
                 prof.stop()
-                write_RFA = open(f"RFA_flops_{num_pdfs}.txt","w")
-                write_RFA.write(prof.key_averages().table(sort_by = "flops"))
+                total_flops = sum([item.flops for item in prof.key_averages() if item.flops > 0])
+                
+                write_RFA = open(f"RFA_flops_{num_pdfs}.txt", "w")
+                write_RFA.write(f"TOTAL FLOPS: {total_flops}\n")
+                write_RFA.write(prof.key_averages().table(sort_by="flops"))
+                write_RFA.close() 
 
+
+                
         train_acc = correct / total
         train_ce = epoch_loss / (X_train.size(0) / batch_size)
         max_acc_train = max(max_acc_train,train_acc)
