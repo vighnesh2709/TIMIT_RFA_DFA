@@ -111,7 +111,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
                 prof.stop()
                 total_flops = sum([item.flops for item in prof.key_averages() if item.flops > 0])
                 
-                write_RFA = open(f"DFA_flops_{num_pdfs}.txt", "w")
+                write_RFA = open(f"../results/DFA_flops_{num_pdfs}.txt", "w")
                 write_RFA.write(f"TOTAL FLOPS: {total_flops}\n")
                 write_RFA.write(prof.key_averages().table(sort_by="flops"))
                 write_RFA.close() 

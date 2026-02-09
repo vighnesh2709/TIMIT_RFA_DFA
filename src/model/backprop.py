@@ -1,16 +1,16 @@
 import torch.nn as nn
 
 class MLP(nn.Module):
-    def __init__(self, num_feats, num_pdfs):
+    def __init__(self, num_feats, hidden_dim,num_pdfs):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(num_feats, 512),
+            nn.Linear(num_feats, hidden_dim),
 	    #nn.BatchNorm1d(512),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(hidden_dim, hidden_dim),
 	    #nn.BatchNorm1d(512),
             nn.ReLU(),
-            nn.Linear(512, num_pdfs)
+            nn.Linear(hidden_dim, num_pdfs)
         )
 
     def forward(self, x):
