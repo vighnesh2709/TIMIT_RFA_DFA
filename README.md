@@ -34,6 +34,7 @@ The project covers MFCC preprocessing, frame-level alignments, tensorized datase
 │   ├── processed_13/
 │   ├── processed_39/
 │   └── processed_*
+├── results/                   - Stores intermediate and flops results
 ├── requirements.txt
 └── README.md
 
