@@ -2,6 +2,9 @@ import torch
 from tqdm import tqdm
 from model.DFA import DFA_MLP
 from torch.profiler import profile, ProfilerActivity, record_function
+from torch.utils.tensorboard import SummaryWriter
+
+writer = SummaryWriter()
 
 prof = profile(
     activities = [ProfilerActivity.CPU],
@@ -47,7 +50,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
     train_acc_hist, val_acc_hist = [], []
     max_acc_train = 0
     max_acc_val = 0
-
+    
     # ================== TRAIN ==================
     for epoch in range(epochs):
 
@@ -92,11 +95,22 @@ def train_dfa(X, Y, num_feats, num_pdfs):
                 # -------- DFA BACKWARD (DIRECT) --------
                 delta2 = (delta3 @ B2) * (a2 > 0).float()
                 delta1 = (delta3 @ B1) * (a1 > 0).float()
-
+                
+                #---------VISUALIZING GRADIENTS----------
+                writer.add_histogram(f'DFA/delta3_{num_pdfs}', delta3, epoch)
+                writer.add_histogram(f'DFA/delta2_{num_pdfs}', delta2, epoch)
+                writer.add_histogram(f'DFA/delta1_{num_pdfs}', delta1, epoch)
+                
                 # -------- WEIGHT UPDATES --------
                 model.fc3.weight -= lr * (delta3.T @ h2)
                 model.fc2.weight -= lr * (delta2.T @ h1)
                 model.fc1.weight -= lr * (delta1.T @ xb)
+                
+
+                writer.add_histogram(f'DFA/grad_fc3_{num_pdfs}', delta3.T @ h2, epoch)
+                writer.add_histogram(f'DFA/grad_fc2_{num_pdfs}', delta2.T @ h1, epoch)
+                writer.add_histogram(f'DFA/grad_fc1_{num_pdfs}', delta1.T @ xb, epoch)
+
 
                 model.fc3.bias -= lr * delta3.sum(dim=0)
                 model.fc2.bias -= lr * delta2.sum(dim=0)
@@ -121,7 +135,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
         max_acc_train = max(max_acc_train,train_acc)
         train_acc_hist.append(train_acc)
         train_ce_hist.append(train_ce)
-
+        writer.add_scalar(f"Train/acc_{num_pdfs}",train_acc,epoch)
         # ================== VALIDATION ==================
         correct = 0
         total = 0
@@ -150,6 +164,7 @@ def train_dfa(X, Y, num_feats, num_pdfs):
         max_acc_val = max(max_acc_val,val_acc)
         val_acc_hist.append(val_acc)
         val_ce_hist.append(val_ce)
+        writer.add_scalar(f"val/acc_{num_pdfs}",val_acc,epoch)
 
         print(
             f"Epoch [{epoch+1}/{epochs}] | "
@@ -158,7 +173,8 @@ def train_dfa(X, Y, num_feats, num_pdfs):
             f"Val CE: {val_ce:.4f} | "
             f"Val Acc: {val_acc:.4f}"
         )
-
+    torch.cuda.empty_cache()
+    del model
     return max_acc_train,max_acc_val
 
 

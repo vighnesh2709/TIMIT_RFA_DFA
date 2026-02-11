@@ -3,12 +3,15 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.profiler import profile, ProfilerActivity, record_function
 from model.backprop import MLP
+from torch.utils.tensorboard import SummaryWriter
 
 prof = profile(
     activities = [ProfilerActivity.CPU],
     record_shapes = True,
     with_flops = True,
 )
+
+writer = SummaryWriter()
 
 def train_bp(train_loader, val_loader, num_feats, num_pdfs):
     # -------- MODEL --------
@@ -63,6 +66,14 @@ def train_bp(train_loader, val_loader, num_feats, num_pdfs):
 
             optimizer.zero_grad()
             loss.backward()
+            
+            for name,params in model.named_parameters():
+                if params.grad is not None:
+                    if name[-4:] == 'bias':
+                        continue
+                    else:
+                        writer.add_histogram(f'gradient/{name}_{num_pdfs}', params.grad, epoch)
+
             optimizer.step()
 
             train_loss += loss.item()
@@ -73,7 +84,7 @@ def train_bp(train_loader, val_loader, num_feats, num_pdfs):
         train_loss /= len(train_loader)
         train_acc = correct / total
         max_acc_train = max(max_acc_train, train_acc)
-
+        writer.add_scalar(f"train/acc_{num_pdfs}",train_acc, epoch)
         train_losses.append(train_loss)
         train_accs.append(train_acc)
 
@@ -99,7 +110,7 @@ def train_bp(train_loader, val_loader, num_feats, num_pdfs):
         val_loss /= len(val_loader)
         val_acc = correct / total
         max_acc_val = max(max_acc_val, val_acc)
-
+        writer.add_scalar(f"val/acc_{num_pdfs}",val_acc,epoch)
         val_losses.append(val_loss)
         val_accs.append(val_acc)
 
@@ -110,5 +121,6 @@ def train_bp(train_loader, val_loader, num_feats, num_pdfs):
             f"Val CE: {val_loss:.4f} | "
             f"Val Acc: {val_acc:.4f}"
         )
-
+    torch.cuda.empty_cache()
+    del model
     return max_acc_train, max_acc_val

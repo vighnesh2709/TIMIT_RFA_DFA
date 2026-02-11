@@ -1,12 +1,12 @@
 
 ================ SUMMARY 13 DIMENSIONS =================
-Backprop  | Max Train Acc: 0.4725 | Max Val Acc: 0.4890 | Time: 0.29 min
-RFA       | Max Train Acc: 0.4509 | Max Val Acc: 0.4692 | Time: 0.16 min
-DFA       | Max Train Acc: 0.4554 | Max Val Acc: 0.4723 | Time: 0.15 min
+Backprop  | Max Train Acc: 0.4717 | Max Val Acc: 0.4896 | Time: 0.29 min
+RFA       | Max Train Acc: 0.4486 | Max Val Acc: 0.4649 | Time: 0.18 min
+DFA       | Max Train Acc: 0.5888 | Max Val Acc: 0.5751 | Time: 1.68 min
 ========================================================
 
 ================ SUMMARY 39 DIMENSIONS =================
-Backprop  | Max Train Acc: 0.1673 | Max Val Acc: 0.1935 | Time: 0.48 min
-RFA       | Max Train Acc: 0.1684 | Max Val Acc: 0.1843 | Time: 0.42 min
-DFA       | Max Train Acc: 0.1770 | Max Val Acc: 0.2017 | Time: 0.52 min
+Backprop  | Max Train Acc: 0.1671 | Max Val Acc: 0.1922 | Time: 0.44 min
+RFA       | Max Train Acc: 0.1674 | Max Val Acc: 0.1797 | Time: 0.44 min
+DFA       | Max Train Acc: 0.3617 | Max Val Acc: 0.3382 | Time: 4.87 min
 ========================================================
