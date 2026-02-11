@@ -1,3 +1,5 @@
 /venv 
 /data
 /test
+/results/runs
+/src/runs

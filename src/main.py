@@ -14,12 +14,13 @@ import os
 
 def main():
 
+    epochs = 5
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
     data_dir = Path(os.environ.get("TIMIT_DATA_DIR", PROJECT_ROOT / "data")).expanduser()
     feature_dir = data_dir / "feature_extracted" / "export_feats"
 
     print("PRE PROCESSING 13 DIMENSIONAL VECTOR\n")
-
+    
     load_mfcc(str(feature_dir / "mfcc_mono.txt"))
     load_alignments(str(feature_dir / "labels_mono.txt"))
     check_dataset()
@@ -51,38 +52,44 @@ def main():
     train_loader, val_loader = prep_dataset("13", splice_size, True)
     
     start_bp = time.time()
-    max_acc_train_bp_13, max_acc_val_bp_13 = train_bp(train_loader, val_loader, num_feats_13, 144)
+    max_acc_train_bp_13, max_acc_val_bp_13 = train_bp(train_loader, val_loader, num_feats_13, 144,epochs)
     end_bp = time.time()
     
     print("BP Bigger model")
     start_bp_v2 = time.time()
-    max_acc_train_bp_13_v2, max_acc_val_bp_13_v2 = train_bp_V2(train_loader, val_loader, num_feats_13, 144)
+    max_acc_train_bp_13_v2, max_acc_val_bp_13_v2 = train_bp_V2(train_loader, val_loader, num_feats_13, 144,epochs)
     end_bp_v2 = time.time()
     print("\n")
     
     print("TRAINING RFA 13 DIMENSIONS\n")
+    
+    device = ("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"DEVICE : {device}")
     processed_root = data_dir / "processed_13"
     X = torch.load(processed_root / "X.pt")
     Y = torch.load(processed_root / "Y.pt")
     
+    X = X.to(device)
+    Y = Y.to(device)
+    
     start_rfa = time.time()
-    max_acc_train_rfa_13, max_acc_val_rfa_13 = train_rfa(X, Y, num_feats_13, 144)
+    max_acc_train_rfa_13, max_acc_val_rfa_13 = train_rfa(X, Y, num_feats_13, 144,epochs)
     end_rfa = time.time()
     
     print("RFA Bigger Model")
     start_rfa_v2 = time.time()
-    max_acc_train_rfa_13_v2, max_acc_val_rfa_13_v2 = train_rfa_V2(X, Y, num_feats_13, 144)
+    max_acc_train_rfa_13_v2, max_acc_val_rfa_13_v2 = train_rfa_V2(X, Y, num_feats_13, 144,epochs)
     end_rfa_v2 = time.time()
     print("\n")
 
     print("TRAINING DFA 13 DIMENSIONS\n")
     start_dfa = time.time()
-    max_acc_train_dfa_13, max_acc_val_dfa_13 = train_dfa(X, Y, num_feats_13, 144)
+    max_acc_train_dfa_13, max_acc_val_dfa_13 = train_dfa(X, Y, num_feats_13, 144,epochs)
     end_dfa = time.time()
     
     print("DFA Bigger Model\n")
     start_dfa_v2 = time.time()
-    max_acc_train_dfa_13_v2, max_acc_val_dfa_13_v2 = train_dfa_V2(X, Y, num_feats_13, 144)
+    max_acc_train_dfa_13_v2, max_acc_val_dfa_13_v2 = train_dfa_V2(X, Y, num_feats_13, 144,epochs)
     end_dfa_v2 = time.time()
 
     # =====================================================
@@ -100,38 +107,43 @@ def main():
     train_loader, val_loader = prep_dataset("39", splice_size, True)
     
     start_bp_39 = time.time()
-    max_acc_train_bp_39, max_acc_val_bp_39 = train_bp(train_loader, val_loader, num_feats_39, 1880)
+    max_acc_train_bp_39, max_acc_val_bp_39 = train_bp(train_loader, val_loader, num_feats_39, 1880,epochs)
     end_bp_39 = time.time()
     
     print("BP Bigger model")
     start_bp_39_v2 = time.time()
-    max_acc_train_bp_39_v2, max_acc_val_bp_39_v2 = train_bp_V2(train_loader, val_loader, num_feats_39, 1880)
+    max_acc_train_bp_39_v2, max_acc_val_bp_39_v2 = train_bp_V2(train_loader, val_loader, num_feats_39, 1880,epochs)
     end_bp_39_v2 = time.time()
     print("\n")
     
     print("TRAINING RFA 39 DIMENSIONS\n")
+    
+
     processed_root = data_dir / "processed_39"
     X = torch.load(processed_root / "X.pt")
     Y = torch.load(processed_root / "Y.pt")
+
+    X = X.to(device)
+    Y = Y.to(device)
     
     start_rfa_39 = time.time()
-    max_acc_train_rfa_39, max_acc_val_rfa_39 = train_rfa(X, Y, num_feats_39, 1880)
+    max_acc_train_rfa_39, max_acc_val_rfa_39 = train_rfa(X, Y, num_feats_39, 1880,epochs)
     end_rfa_39 = time.time()
 
     print("RFA Bigger Model")    
     start_rfa_39_v2 = time.time()
-    max_acc_train_rfa_39_v2, max_acc_val_rfa_39_v2 = train_rfa_V2(X, Y, num_feats_39, 1880)
+    max_acc_train_rfa_39_v2, max_acc_val_rfa_39_v2 = train_rfa_V2(X, Y, num_feats_39, 1880,epochs)
     end_rfa_39_v2 = time.time()
     print("\n")
 
     print("TRAINING DFA 39 DIMENSIONS\n")
     start_dfa_39 = time.time()
-    max_acc_train_dfa_39, max_acc_val_dfa_39 = train_dfa(X, Y, num_feats_39, 1880)
+    max_acc_train_dfa_39, max_acc_val_dfa_39 = train_dfa(X, Y, num_feats_39, 1880,epochs)
     end_dfa_39 = time.time()
 
     print("DFA Bigger Model")
     start_dfa_39_v2 = time.time()
-    max_acc_train_dfa_39_v2, max_acc_val_dfa_39_v2 = train_dfa_V2(X, Y, num_feats_39, 1880)
+    max_acc_train_dfa_39_v2, max_acc_val_dfa_39_v2 = train_dfa_V2(X, Y, num_feats_39, 1880,epochs)
     end_dfa_39_v2 = time.time()
     
     # =====================================================
