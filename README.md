@@ -78,7 +78,10 @@ The main training script also evaluates both a **3-layer baseline** and a **larg
 
 All three methods are compared on the same TIMIT-derived tensors and similar optimization settings (batch size 256, learning rate 1e-3 by default in training files).
 
----
+### Direct Feedback Alignment (DFA)
+- Implemented in `src/train_DFA.py` and `src/train_DFA_v2.py`.
+- Uses direct random projections from output-layer error to hidden layers.
+- Performs explicit manual updates for all trainable layers.
 
 ## 4) Data and expected directory structure
 
@@ -128,7 +131,10 @@ What it does:
 
 > Note: `featureExtraction.sh` assumes a functional Kaldi setup (`path.sh`, model/alignment dirs, and train data files).
 
----
+```bash
+cd src/kaldi_scripts
+bash featureExtraction.sh
+```
 
 ## 6) Preprocessing and tensor generation
 
@@ -167,7 +173,11 @@ python src/main.py
 
 Default in `main.py` is currently `epochs = 5` (can be edited directly).
 
----
+Important behavior:
+- If splicing is enabled, the spliced `X` is saved back to `processed_<vector_size>/X.pt`.
+- Main script uses context size `5`, so effective input dimensions are:
+  - 13-dim case: `13 × (2×5 + 1) = 143`
+  - 39-dim case: `39 × (2×5 + 1) = 429`
 
 ## 8) Model variants
 
@@ -183,7 +193,7 @@ Default in `main.py` is currently `epochs = 5` (can be edited directly).
 - DFA: `src/model/DFA_v2.py`
 - Hidden width is 1024 in v2 models.
 
----
+Run everything from preprocessing to model comparison with:
 
 ## 9) TensorBoard logging
 
@@ -197,30 +207,8 @@ After running training, inspect logs with:
 tensorboard --logdir runs
 ```
 
----
-
-## 10) Results included in this repository
-
-The `results/` folder includes previously generated experiment artifacts, such as:
-- method comparison summaries (`results_comparison.txt`, `results_4_layers.txt`)
-- alternate run outputs (`result.txt`, `result_with_batchnorm.txt`)
-- profiling outputs (`backprop_profile_results/`, `rfa_profile_results/`)
-- saved weight statistics (`results/weights/`)
-
-The profiling text files indicate example compute cost measurements (FLOPs) for BP and RFA steps.
 
 ---
-
-## 11) Reproducibility notes and caveats
-
-This is a research/prototyping codebase. Before using for publishable benchmarking, consider:
-
-- **Random seeds** are not globally fixed in the current scripts.
-- **Path assumptions** exist (Kaldi layout, data export locations).
-- Some historical result files may come from different experiment settings.
-- Splicing writes transformed tensors back to disk; avoid accidental double-processing.
-- `requirements.txt` is currently empty; install dependencies manually.
-
 Recommended core dependencies:
 - Python 3.10+
 - PyTorch
@@ -228,7 +216,7 @@ Recommended core dependencies:
 - tensorboard
 - Kaldi tools (for feature/alignment export stage)
 
----
+After running training, inspect logs with:
 
 ## 12) Quickstart checklist
 
@@ -237,18 +225,6 @@ Recommended core dependencies:
 3. Ensure files are in `data/feature_extracted/export_feats/` (or set `TIMIT_DATA_DIR`).
 4. Run `python src/main.py`.
 5. Read `results/results_comparison.txt`.
-6. (Optional) inspect TensorBoard logs.
+6. Inspect TensorBoard logs.
 
 ---
-
-## 13) Suggested next improvements
-
-- Add a fully pinned `requirements.txt`.
-- Add CLI arguments for epochs, LR, batch size, and data directory.
-- Save checkpoints and per-epoch metrics in structured JSON/CSV.
-- Add deterministic seeding + experiment config files.
-- Add unit tests for preprocessing and shape consistency.
-
----
-
-If you want, I can also generate a **publication-style README** variant with experiment tables, equations for BP/RFA/DFA updates, and a reproducibility section tailored for a paper appendix.
