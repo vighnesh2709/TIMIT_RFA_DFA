@@ -1,0 +1,28 @@
+
+====================================================================================================
+SUMMARY 13 DIMENSIONS (144 OUTPUT CLASSES)
+====================================================================================================
+Standard Model:
+  Backprop  | Train Acc: 0.5265 | Val Acc: 0.5271 | Time: 6.29 min
+  RFA       | Train Acc: 0.5069 | Val Acc: 0.5088 | Time: 8.67 min
+  DFA       | Train Acc: 0.5115 | Val Acc: 0.5148 | Time: 8.54 min
+
+Larger Model (V2):
+  Backprop  | Train Acc: 0.5304 | Val Acc: 0.5313 | Time: 17.58 min
+  RFA       | Train Acc: 0.4994 | Val Acc: 0.4996 | Time: 24.85 min
+  DFA       | Train Acc: 0.5052 | Val Acc: 0.5084 | Time: 24.47 min
+
+====================================================================================================
+SUMMARY 39 DIMENSIONS (1880 OUTPUT CLASSES)
+====================================================================================================
+Standard Model:
+  Backprop  | Train Acc: 0.3022 | Val Acc: 0.3086 | Time: 12.71 min
+  RFA       | Train Acc: 0.2637 | Val Acc: 0.2741 | Time: 18.78 min
+  DFA       | Train Acc: 0.2626 | Val Acc: 0.2722 | Time: 18.64 min
+
+Larger Model (V2):
+  Backprop  | Train Acc: 0.2939 | Val Acc: 0.3024 | Time: 31.25 min
+  RFA       | Train Acc: 0.2460 | Val Acc: 0.2387 | Time: 42.49 min
+  DFA       | Train Acc: 0.2353 | Val Acc: 0.2075 | Time: 41.50 min
+
+====================================================================================================

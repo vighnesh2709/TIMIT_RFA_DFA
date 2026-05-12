@@ -1,0 +1,55 @@
+================================================================================
+RFA TRAINING - FORWARD AND BACKWARD FLOPs PROFILING
+================================================================================
+
+Timestamp: 2026-02-03T18:33:28.374428
+Device: cpu
+
+MODEL CONFIGURATION:
+--------------------------------------------------------------------------------
+  num_features............................ 429
+  hidden_dim.............................. 512
+  num_classes............................. 1880
+
+BATCH CONFIGURATION:
+--------------------------------------------------------------------------------
+  batch_size.............................. 256
+  learning_rate........................... 0.001
+
+Profiled at Epoch 0, Batch 0
+
+FLOPs MEASUREMENT:
+--------------------------------------------------------------------------------
+Total FLOPs (Forward + RFA Backward + Updates):
+         2,108,736,856 FLOPs
+              2.108737 GFLOPs
+             8,237,253 FLOPs per sample
+
+Estimations:
+  For 100 epochs (10K steps): 21,087,368,560,000 FLOPs
+  For 100 epochs (10K steps):          21.087 TFLOPs
+
+================================================================================
+TOP OPERATIONS BY FLOPs:
+================================================================================
+Operation                                               FLOPs    Count
+--------------------------------------------------------------------------------
+aten::mm                                        1,366,556,672        5
+aten::addmm                                       739,508,224        3
+aten::mul                                           2,190,680        9
+aten::add                                             481,280        1
+
+================================================================================
+NOTES:
+================================================================================
+
+This profiling measures the FLOPs for one complete RFA training step which includes:
+1. Forward pass through the network
+2. RFA backward computation using fixed random matrices (B2, B3)
+3. Direct weight updates
+
+The FLOPs include all matrix multiplications and element-wise operations.
+
+To scale this to a full training run:
+- Multiply by number of total training steps (batches × epochs)
+- Adjust batch size if different from profiled batch size

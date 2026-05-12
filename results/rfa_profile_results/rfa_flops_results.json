@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-02-03T18:33:28.374428",
+  "device": "cpu",
+  "epoch": 0,
+  "batch_number": 0,
+  "model_config": {
+    "num_features": 429,
+    "hidden_dim": 512,
+    "num_classes": 1880
+  },
+  "batch_config": {
+    "batch_size": 256,
+    "learning_rate": 0.001
+  },
+  "flops": {
+    "full_training_step": {
+      "total_flops": 2108736856,
+      "total_gflops": 2.108737,
+      "per_sample": 8237253
+    }
+  },
+  "operation_breakdown": [
+    {
+      "operation": "aten::mm",
+      "flops": 1366556672,
+      "cpu_time_ms": 0.4371,
+      "count": 5
+    },
+    {
+      "operation": "aten::addmm",
+      "flops": 739508224,
+      "cpu_time_ms": 0.5394,
+      "count": 3
+    },
+    {
+      "operation": "aten::mul",
+      "flops": 2190680,
+      "cpu_time_ms": 0.0208,
+      "count": 9
+    },
+    {
+      "operation": "aten::add",
+      "flops": 481280,
+      "cpu_time_ms": 0.0539,
+      "count": 1
+    }
+  ]
+}

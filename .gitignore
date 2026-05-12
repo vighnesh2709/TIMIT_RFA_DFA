@@ -1,0 +1,9 @@
+/venv 
+/data
+/test
+/results/runs
+/src/runs
+/src/logs
+export_feats.zip
+__pycache__/
+*.pyc

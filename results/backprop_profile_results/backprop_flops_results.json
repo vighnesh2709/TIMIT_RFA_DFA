@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-02-03T19:00:59.097789",
+  "device": "cpu",
+  "method": "Standard Backpropagation (PyTorch)",
+  "epoch": 0,
+  "batch_number": 0,
+  "model_config": {
+    "num_features": 429,
+    "num_classes": 1880,
+    "total_parameters": 9904
+  },
+  "batch_config": {
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "optimizer": "SGD"
+  },
+  "flops": {
+    "full_training_step": {
+      "total_flops": 6628048896,
+      "total_gflops": 6.628049,
+      "per_sample": 25890816
+    }
+  },
+  "operation_breakdown": [
+    {
+      "operation": "aten::mm",
+      "flops": 4343726080,
+      "cpu_time_ms": 0.7523,
+      "count": 7
+    },
+    {
+      "operation": "aten::addmm",
+      "flops": 2284322816,
+      "cpu_time_ms": 0.7838,
+      "count": 4
+    }
+  ]
+}

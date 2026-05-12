@@ -1,0 +1,28 @@
+
+====================================================================================================
+SUMMARY MONOPHONE DIMENSIONS (144 OUTPUT CLASSES)
+====================================================================================================
+Standard Model:
+  Backprop  | Train Acc: 0.6963 | Val Acc: 0.6308 | Time: 18.81 min
+  RFA       | Train Acc: 0.6605 | Val Acc: 0.6066 | Time: 4.56 min
+  DFA       | Train Acc: 0.6651 | Val Acc: 0.6089 | Time: 4.51 min
+
+Larger Model (V2):
+  Backprop  | Train Acc: 0.7661 | Val Acc: 0.6549 | Time: 19.45 min
+  RFA       | Train Acc: 0.5714 | Val Acc: 0.5625 | Time: 5.75 min
+  DFA       | Train Acc: 0.6801 | Val Acc: 0.6119 | Time: 5.59 min
+
+====================================================================================================
+SUMMARY TRIPHONE DIMENSIONS (1768 OUTPUT CLASSES)
+====================================================================================================
+Standard Model:
+  Backprop  | Train Acc: 0.6107 | Val Acc: 0.5111 | Time: 21.50 min
+  RFA       | Train Acc: 0.5229 | Val Acc: 0.4351 | Time: 4.67 min
+  DFA       | Train Acc: 0.5042 | Val Acc: 0.4258 | Time: 4.78 min
+
+Larger Model (V2):
+  Backprop  | Train Acc: 0.6825 | Val Acc: 0.5501 | Time: 22.90 min
+  RFA       | Train Acc: 0.4443 | Val Acc: 0.3956 | Time: 7.26 min
+  DFA       | Train Acc: 0.4988 | Val Acc: 0.4280 | Time: 7.58 min
+
+====================================================================================================

@@ -1,0 +1,56 @@
+================================================================================
+STANDARD BACKPROPAGATION - FLOPs PROFILING
+================================================================================
+
+Timestamp: 2026-02-03T19:00:59.097789
+Device: cpu
+Method: Standard Backpropagation (PyTorch)
+
+MODEL CONFIGURATION:
+--------------------------------------------------------------------------------
+  num_features............................ 429
+  num_classes............................. 1880
+  total_parameters........................ 9904
+
+BATCH CONFIGURATION:
+--------------------------------------------------------------------------------
+  batch_size.............................. 256
+  learning_rate........................... 0.001
+  optimizer............................... SGD
+
+Profiled at Epoch 0, Batch 0
+
+FLOPs MEASUREMENT:
+--------------------------------------------------------------------------------
+Total FLOPs (Forward + Backward + Optimizer):
+         6,628,048,896 FLOPs
+              6.628049 GFLOPs
+            25,890,816 FLOPs per sample
+
+Estimations:
+  For 100 epochs training: multiply by total batches
+  Example: 6628048896 × 10,000 batches
+          = 66,280,488,960,000 FLOPs
+          = 66.280 TFLOPs
+
+================================================================================
+TOP OPERATIONS BY FLOPs:
+================================================================================
+Operation                                               FLOPs    Count
+--------------------------------------------------------------------------------
+aten::mm                                        4,343,726,080        7
+aten::addmm                                     2,284,322,816        4
+
+================================================================================
+KEY INSIGHT:
+================================================================================
+
+This profiling measures the FLOPs for one complete training step which includes:
+
+1. Forward pass: Model inference (x → logits)
+2. Backward pass: PyTorch autograd computes gradients for all parameters
+3. Optimizer step: SGD applies gradient updates to weights
+
+The backward pass dominates and is typically 2-3x more expensive than forward.
+
+Compare this with RFA and DFA methods to see compute savings.
