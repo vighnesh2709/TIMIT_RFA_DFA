@@ -3,26 +3,26 @@
 SUMMARY MONOPHONE DIMENSIONS (144 OUTPUT CLASSES)
 ====================================================================================================
 Standard Model:
-  Backprop  | Train Acc: 0.4808 | Val Acc: 0.5452 | Time: 0.24 min
-  RFA       | Train Acc: 0.4605 | Val Acc: 0.5324 | Time: 0.05 min
-  DFA       | Train Acc: 0.4690 | Val Acc: 0.5377 | Time: 0.05 min
+  Backprop  | Train Acc: 0.4835 | Val Acc: 0.5482 | Time: 0.24 min
+  RFA       | Train Acc: 0.4639 | Val Acc: 0.5335 | Time: 0.06 min
+  DFA       | Train Acc: 0.4691 | Val Acc: 0.5411 | Time: 0.05 min
 
 Larger Model (V2):
-  Backprop  | Train Acc: 0.4774 | Val Acc: 0.5469 | Time: 0.23 min
-  RFA       | Train Acc: 0.4559 | Val Acc: 0.5298 | Time: 0.06 min
-  DFA       | Train Acc: 0.4756 | Val Acc: 0.5422 | Time: 0.06 min
+  Backprop  | Train Acc: 0.4749 | Val Acc: 0.5464 | Time: 0.23 min
+  RFA       | Train Acc: 0.4533 | Val Acc: 0.5301 | Time: 0.07 min
+  DFA       | Train Acc: 0.4764 | Val Acc: 0.5500 | Time: 0.06 min
 
 ====================================================================================================
 SUMMARY TRIPHONE DIMENSIONS (1768 OUTPUT CLASSES)
 ====================================================================================================
 Standard Model:
-  Backprop  | Train Acc: 0.4358 | Val Acc: 0.4973 | Time: 0.23 min
-  RFA       | Train Acc: 0.4081 | Val Acc: 0.4808 | Time: 0.06 min
-  DFA       | Train Acc: 0.4201 | Val Acc: 0.4929 | Time: 0.07 min
+  Backprop  | Train Acc: 0.4346 | Val Acc: 0.4983 | Time: 0.26 min
+  RFA       | Train Acc: 0.4078 | Val Acc: 0.4757 | Time: 0.06 min
+  DFA       | Train Acc: 0.4217 | Val Acc: 0.4950 | Time: 0.06 min
 
 Larger Model (V2):
-  Backprop  | Train Acc: 0.3976 | Val Acc: 0.4780 | Time: 0.23 min
-  RFA       | Train Acc: 0.3838 | Val Acc: 0.4726 | Time: 0.07 min
-  DFA       | Train Acc: 0.4183 | Val Acc: 0.4907 | Time: 0.08 min
+  Backprop  | Train Acc: 0.3968 | Val Acc: 0.4782 | Time: 0.27 min
+  RFA       | Train Acc: 0.3844 | Val Acc: 0.4768 | Time: 0.07 min
+  DFA       | Train Acc: 0.4167 | Val Acc: 0.4948 | Time: 0.07 min
 
 ====================================================================================================
